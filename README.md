@@ -9,7 +9,7 @@ The game starts with choosing a secret random 4-digit number. The objective is t
 Example game may look like this:
 
 ```
-Number to gues: 8536
+Number to guess: 8536
 
 9435 1b 1c
 3865 0b 4c
