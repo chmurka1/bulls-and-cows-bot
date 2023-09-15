@@ -4,9 +4,9 @@ The goal of this project is to [bulls and cows](https://en.wikipedia.org/wiki/Bu
 
 ##Bulls and cows -- rules
 
-The game starts with choosing a secret random 4-digit number. The objective is to guess that number, given the clues. After each guess, the player is given two numbers -- numbeer of cows and number of bulls. Bulls aree the digits of the guessed number that are contained in the final answer and are in right positions. Cows are the digits that are containeed in the final answer, but are in wrong positions.
+The game starts with choosing a secret random 4-digit number. The objective is to guess that number, given the clues. After each guess, the player is given two numbers - number of cows and number of bulls. Bulls are the digits of the guessed number that are contained in the final answer and are in right positions. Cows are the digits that are containeed in the final answer, but are in wrong positions.
 
-Example game may look like this:
+Example game may look like this: 
 
 ```
 Number to guess: 8536
