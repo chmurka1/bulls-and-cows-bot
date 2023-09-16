@@ -8,7 +8,7 @@ pub struct Game {
 impl Game {
     pub fn new(length : usize) -> Game {
         let mut rng = thread_rng();
-        let sample = (0..9).choose_multiple(&mut rng, length);
+        let sample = (0..10).choose_multiple(&mut rng, length);
 
         let answer = sample.iter().map(|u| -> char {
                 char::from_digit(*u, 10).expect("Gamee error")
