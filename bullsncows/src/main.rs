@@ -1,4 +1,3 @@
-use std::io;
 mod game;
 
 fn main() {
@@ -19,7 +18,7 @@ fn main() {
                 println!("Bulls: {}, cows: {}", bulls, cows);
 
                 if bulls == g.get_answer_length() && cows == 0 {
-                    println!("You won after {} guesses", g.get_guess_count())
+                    println!("You won after {} guesses", g.get_guess_count());
                 }
             }
         }
