@@ -1,4 +1,5 @@
 use rand::{seq::IteratorRandom, thread_rng};
+use std::collections::HashSet;
 
 pub struct Game {
     guess_count : u64,
@@ -30,7 +31,7 @@ impl Game {
     }
 
     pub fn make_guess(&mut self, guess: &str) -> Option<(usize, usize)> {
-        if guess.len() != self.answer.len() || !guess.chars().all(char::is_alphanumeric) {
+        if guess.len() != self.answer.len() || !guess.chars().all(char::is_alphanumeric) || guess.chars().collect::<HashSet<char>>().len() != guess.len() {
             return None;
         }
 
