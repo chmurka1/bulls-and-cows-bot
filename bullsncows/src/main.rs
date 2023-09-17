@@ -3,7 +3,7 @@ mod game;
 
 fn main() {
     let mut g = game::Game::new(4); 
-    println!("Gues the number: {}", g.get_answer());
+    println!("Guess the number: {}", g.get_answer());
     
     for _ in 1..100 {
         let mut user_guess = String::new();
