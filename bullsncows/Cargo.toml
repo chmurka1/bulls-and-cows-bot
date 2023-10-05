@@ -3,15 +3,6 @@ name = "bullsncows"
 version = "0.1.0"
 edition = "2021"
 
-[[bin]]
-name = "baselinealgo"
-path = "src/baseline_algo.rs"
-
-[[bin]]
-name = "baselinealgobattlefield"
-path = "src/baseline_algo_battlefield.rs"
-
-
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
