@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 use rand::seq::SliceRandom;
-
+use crate::algos::algos_utils;
 pub struct BaselineAlgo {
     numbers : Vec<String>,
     past_guesses : Vec<(String, (usize, usize))>,
@@ -51,7 +51,7 @@ impl BaselineAlgo {
     }
 
     pub fn incorporate_guess_feedback(&mut self, bulls: usize, cows: usize) -> Option<bool> {
-        if bulls + cows > self.ndigits {
+        if bulls + cows > self.ndigits || (bulls == self.ndigits-1 && cows == 1) {
             return None;
         }
         else if self.last_guess_updated == true {
@@ -71,70 +71,23 @@ impl BaselineAlgo {
 
         let mut valid_numbers:Vec<String> = Vec::new();
         for number in self.numbers.iter() {
-            let local_bulls: usize = number.chars().zip(guess.0.chars()).filter(|(a, b)| {
-                a == b
-            }).count();
-            let local_cows: usize = number.chars().filter(|&c| {
-                guess.0.contains(c)
-            }).count() - local_bulls;
-            if local_bulls == guess.1.0 && local_cows == guess.1.1 {
+            let bnc: (usize, usize) = algos_utils::get_bulls_and_cows(guess.0.clone(), number.clone()).unwrap();
+            if bnc.0 == guess.1.0 && bnc.1 == guess.1.1 {
                 valid_numbers.push(number.clone());
             }
         }
     
     return Some(valid_numbers);
     }
-
-    // just for testing purposes
-    pub fn pub_get_last_guess(&self) -> Option<(String, (usize, usize))> {
-        return self.get_last_guess();
-    }
-
-    // just for testing purposes
-    fn pub_find_valid_numbers(&self, guess: (String, (usize, usize))) -> Option<Vec<String>> {
-        return self.find_valid_numbers(guess);
-    }
-
 }
 
-pub fn generate_default_init_values_for_numbers() -> Vec<String> {
-    let mut numbers : Vec<String> = Vec::new();
-    let tmp_numbers : Vec<String> = (0..10000).map(|u| -> String {format!("{:04}", u)}).collect::<Vec<String>>();
-    for number in  tmp_numbers {
-        let mut valid = true;
-        let mut digits = HashSet::new();
-        for digit in number.chars() {
-            if digits.contains(&digit) {
-                valid = false;
-                break;
-            } else {
-                digits.insert(digit);
-            }
-        }
-        if valid {
-            numbers.push(number);
-        }            
-    }
-    return numbers;
-}
 #[cfg(test)]
 mod tests {
-    use super::{generate_default_init_values_for_numbers, BaselineAlgo};
+    use crate::algos::algos_utils::generate_default_init_values_for_numbers;
+    use super::BaselineAlgo;
+    
     #[test]
-    fn test_generate_default_init_values_for_numbers_output() {
-        let numbers = generate_default_init_values_for_numbers();
-        assert_eq!(numbers.len(), 5040);
-        let numbers = generate_default_init_values_for_numbers();
-        for number in numbers {
-            let mut digits = std::collections::HashSet::new();
-            for digit in number.chars() {
-                digits.insert(digit);
-            }
-            assert_eq!(digits.len(), 4);
-        }
-    }
-    #[test]
-    fn test_baseline_algo_new() {
+    fn test_BaselineAlgo_new() {
         let numbers = generate_default_init_values_for_numbers();
         let ba = BaselineAlgo::new(numbers);
         assert_eq!(ba.as_ref().is_some(), true);
@@ -146,7 +99,7 @@ mod tests {
         assert_eq!(ba.as_ref().unwrap().numbers, numbers);
     }
     #[test]
-    fn test_baseline_algo_get_numbers_count() {
+    fn test_BaselineAlgo_get_numbers_count() {
         let numbers = generate_default_init_values_for_numbers();
         let ba = BaselineAlgo::new(numbers).unwrap();
         assert_eq!(ba.get_numbers_count(), 5040);
@@ -155,7 +108,7 @@ mod tests {
         assert_eq!(ba.get_numbers_count(), 2);
     }
     #[test]
-    fn test_basic_baseline_algo_guess() {
+    fn test_basic_BaselineAlgo_guess() {
         let numbers = generate_default_init_values_for_numbers();
         let mut ba = super::BaselineAlgo::new(numbers).unwrap();
         let guess = ba.guess();
@@ -163,7 +116,7 @@ mod tests {
         assert_eq!(ba.numbers.len(), 5039);
         assert_eq!(ba.past_guesses.len(), 1);
         assert_eq!(ba.last_guess_updated, false);
-        assert_eq!(ba.past_guesses[0].0, guess.unwrap());
+        assert_eq!(ba.past_guesses[0].0, *guess.as_ref().unwrap());
         assert_eq!(ba.past_guesses[0].1, (usize::MAX, usize::MAX));
         
         let guess = ba.guess();
@@ -176,19 +129,11 @@ mod tests {
         assert_eq!(ba.numbers.len(), 1);
         assert_eq!(ba.past_guesses.len(), 1);
         assert_eq!(ba.last_guess_updated, false);
-        assert_eq!(ba.past_guesses[0].0, guess.unwrap());
+        assert_eq!(ba.past_guesses[0].0, *guess.as_ref().unwrap());
         assert_eq!(ba.past_guesses[0].1, (usize::MAX, usize::MAX));
     }
     #[test]
-    fn test_find_valid_numbers(){
-        let numbers = vec![String::from("1234"), String::from("5678"), String::from("8921")];
-        let mut ba = BaselineAlgo::new(numbers).unwrap();
-        let guess = ba.guess().unwrap();
-        let valid_numbers = ba.pub_find_valid_numbers((guess.clone(), (4, 0))).unwrap();
-        assert_eq!(valid_numbers.len(), 0);
-    }
-    #[test]
-    fn test_basic_baseline_algo_incorporate_guess_feedback() {
+    fn test_basic_BaselineAlgo_incorporate_guess_feedback() {
         let numbers = generate_default_init_values_for_numbers();
         let mut ba = BaselineAlgo::new(numbers).unwrap();
         let guess = ba.guess().unwrap();
@@ -207,59 +152,7 @@ mod tests {
         let res = ba.incorporate_guess_feedback(5, 0);
         assert_eq!(res.as_ref().is_some(), false);
     }
-    #[test]
-    // THIS TEST IS IN PROGRESS
-    fn test_baseline_algo_pub_find_valid_numbers() {
-        let numbers = generate_default_init_values_for_numbers();
-        let mut ba = BaselineAlgo::new(numbers).unwrap();
-        let guess = ba.guess().unwrap();
-        let feedbacks = vec![(0, 0), (0, 1), (0, 2), (0, 3), (0, 4),
-                                                    (1, 0), (1, 1), (1, 2), (1, 3),
-                                                    (2, 0), (2, 1), (2, 2),
-                                                    (3, 0),
-                                                    (4, 0)];
-        for feedback in feedbacks {
-            let valid_numbers = ba.pub_find_valid_numbers((guess.clone(), feedback)).unwrap();
-            // 4 choose feedback.0 times (6 + feedback.1) choose (4 - feedback.0) times (4 - feedback.0)!
-            let expected_len = 
-            assert_eq!(valid_numbers.len(), expected_len);
-        }
-        
-        let valid_numbers = ba.pub_find_valid_numbers((guess.clone(), (4, 0))).unwrap();
-        assert_eq!(valid_numbers.len(), 0);
-        let valid_numbers = ba.pub_find_valid_numbers((guess.clone(), (3, 0))).unwrap();
-        assert_eq!(valid_numbers.len(), 24);
-        let valid_numbers = ba.pub_find_valid_numbers((guess.clone(), (2, 0))).unwrap();
-        assert_eq!(valid_numbers.len(), 276);
-        let valid_numbers = ba.pub_find_valid_numbers((guess.clone(), (1, 0))).unwrap();
-        assert_eq!(valid_numbers.len(), 2024);
-        let valid_numbers = ba.pub_find_valid_numbers((guess.clone(), (0, 0))).unwrap();
-        assert_eq!(valid_numbers.len(), 5040);
-        let valid_numbers = ba.pub_find_valid_numbers((guess.clone(), (0, 1))).unwrap();
-        assert_eq!(valid_numbers.len(), 0);
-        let valid_numbers = ba.pub_find_valid_numbers((guess.clone(), (0, 2))).unwrap();
-        assert_eq!(valid_numbers.len(), 0);
-        let valid_numbers = ba.pub_find_valid_numbers((guess.clone(), (0, 3))).unwrap();
-        assert_eq!(valid_numbers.len(), 0);
-        let valid_numbers = ba.pub_find_valid_numbers((guess.clone(), (0, 4))).unwrap();
-        assert_eq!(valid_numbers.len(), 0);
-        let valid_numbers = ba.pub_find_valid_numbers((guess.clone(), (1, 1))).unwrap();
-        assert_eq!(valid_numbers.len(), 0);
-        let valid_numbers = ba.pub_find_valid_numbers((guess.clone(), (1, 2))).unwrap();
-        assert_eq!(valid_numbers.len(), 0);
-        let valid_numbers = ba.pub_find_valid_numbers((guess.clone(), (1, 3))).unwrap();
-        assert_eq!(valid_numbers.len(), 0);
-        let valid_numbers = ba.pub_find_valid_numbers((guess.clone(), (1, 4))).unwrap();
-        assert_eq!(valid_numbers.len(), 0);
-        let valid_numbers = ba.pub_find_valid_numbers((guess.clone(), (2, 1))).unwrap();
-        assert_eq!(valid_numbers.len(), 0
-    }
 }
-
-// fn main() {
-//     let mut defaults : Vec<String> = algos::generate_default_init_values_for_numbers();
-//     let mut ba: = algos::BaselineAlgo::new(defaults);
-// }
 
 // additional comments
 // if we want to incorporate the knowledge about the distribution of the numbers from which
