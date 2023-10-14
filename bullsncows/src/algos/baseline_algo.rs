@@ -87,7 +87,7 @@ mod tests {
     use super::BaselineAlgo;
     
     #[test]
-    fn test_BaselineAlgo_new() {
+    fn test_baseline_algo_new() {
         let numbers = generate_default_init_values_for_numbers();
         let ba = BaselineAlgo::new(numbers);
         assert_eq!(ba.as_ref().is_some(), true);
@@ -99,7 +99,7 @@ mod tests {
         assert_eq!(ba.as_ref().unwrap().numbers, numbers);
     }
     #[test]
-    fn test_BaselineAlgo_get_numbers_count() {
+    fn test_baseline_algo_get_numbers_count() {
         let numbers = generate_default_init_values_for_numbers();
         let ba = BaselineAlgo::new(numbers).unwrap();
         assert_eq!(ba.get_numbers_count(), 5040);
@@ -108,7 +108,7 @@ mod tests {
         assert_eq!(ba.get_numbers_count(), 2);
     }
     #[test]
-    fn test_basic_BaselineAlgo_guess() {
+    fn test_basic_baseline_algo_guess() {
         let numbers = generate_default_init_values_for_numbers();
         let mut ba = super::BaselineAlgo::new(numbers).unwrap();
         let guess = ba.guess();
@@ -133,7 +133,7 @@ mod tests {
         assert_eq!(ba.past_guesses[0].1, (usize::MAX, usize::MAX));
     }
     #[test]
-    fn test_basic_BaselineAlgo_incorporate_guess_feedback() {
+    fn test_basic_baseline_algo_incorporate_guess_feedback() {
         let numbers = generate_default_init_values_for_numbers();
         let mut ba = BaselineAlgo::new(numbers).unwrap();
         let guess = ba.guess().unwrap();

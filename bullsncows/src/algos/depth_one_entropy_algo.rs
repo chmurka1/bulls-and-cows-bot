@@ -92,7 +92,6 @@ impl DepthOneEntropyAlgo {
         return Some(valid_numbers);
     }
 
-
     fn calculate_guess_entropy(&self, guess: String) -> Option<f64> {
         if self.get_numbers_count() == 1 {
             return None;
@@ -134,7 +133,7 @@ mod tests {
         assert_eq!(doea.as_ref().unwrap().numbers, numbers);
     }
     #[test]
-    fn test_DepthOneEntropyAlgo_get_numbers_count() {
+    fn test_depth_one_entropy_algo_get_numbers_count() {
         let numbers = generate_default_init_values_for_numbers();
         let doea = DepthOneEntropyAlgo::new(numbers).unwrap();
         assert_eq!(doea.get_numbers_count(), 5040);
@@ -143,7 +142,7 @@ mod tests {
         assert_eq!(doea.get_numbers_count(), 2);
     }
     #[test]
-    fn test_basic_DepthOneEntropyAlgo_guess0() {
+    fn test_basic_depth_one_entropy_algo_guess0() {
         let numbers = generate_default_init_values_for_numbers();
         let mut doea = super::DepthOneEntropyAlgo::new(numbers).unwrap();
         let guess = doea.guess();
@@ -158,7 +157,7 @@ mod tests {
         assert_eq!(guess.as_ref().is_some(), false);
     }
     #[test]
-    fn test_basic_DepthOneEntropyAlgo_guess1() {
+    fn test_basic_depth_one_entropy_algo_guess1() {
         let numbers = vec![String::from("1234"), String::from("5678")];
         let mut doea = super::DepthOneEntropyAlgo::new(numbers).unwrap();
         let guess = doea.guess();
@@ -176,31 +175,31 @@ mod tests {
         assert_eq!(guess.as_ref().unwrap(), &String::from("1324"));
     }
     #[test]
-    fn test_basic_DepthOneEntropyAlgo_guess2() {
+    fn test_basic_depth_one_entropy_algo_guess2() {
         let numbers = vec![String::from("1234"), String::from("1256"), String::from("7325"), String::from("2091"), String::from("9012"), String::from("1324"), String::from("7891")];
         let mut doea = super::DepthOneEntropyAlgo::new(numbers).unwrap();
         let guess = doea.guess();
         assert_eq!(vec![String::from("1234"), String::from("1256"), String::from("1324")].contains(guess.as_ref().unwrap()), true);
         assert_eq!(guess.as_ref().unwrap(), &String::from("1324"));
     }
-    // #[test]
-    // fn test_basic_DepthOneEntropyAlgo_incorporate_guess_feedback() {
-    //     let numbers = generate_default_init_values_for_numbers();
-    //     let mut doea = DepthOneEntropyAlgo::new(numbers).unwrap();
-    //     let guess = doea.guess().unwrap();
-    //     let res = doea.incorporate_guess_feedback(4, 0);
-    //     assert_eq!(res.as_ref().is_some(), true);
-    //     assert_eq!(res.unwrap(), true);
-    //     assert_eq!(doea.get_numbers_count(), 0);
-    //     assert_eq!(doea.past_guesses.len(), 1);
-    //     assert_eq!(doea.last_guess_updated, true);
-    //     assert_eq!(doea.past_guesses[0].0, guess);
-    //     assert_eq!(doea.past_guesses[0].1, (4, 0));
+    #[test]
+    fn test_basic_depth_one_entropy_algo_incorporate_guess_feedback() {
+        let numbers = generate_default_init_values_for_numbers();
+        let mut doea = DepthOneEntropyAlgo::new(numbers).unwrap();
+        let guess = doea.guess().unwrap();
+        let res = doea.incorporate_guess_feedback(4, 0);
+        assert_eq!(res.as_ref().is_some(), true);
+        assert_eq!(res.unwrap(), true);
+        assert_eq!(doea.get_numbers_count(), 0);
+        assert_eq!(doea.past_guesses.len(), 1);
+        assert_eq!(doea.last_guess_updated, true);
+        assert_eq!(doea.past_guesses[0].0, guess);
+        assert_eq!(doea.past_guesses[0].1, (4, 0));
         
-    //     let numbers = generate_default_init_values_for_numbers();
-    //     let mut doea = DepthOneEntropyAlgo::new(numbers).unwrap();
-    //     let guess = doea.guess().unwrap();
-    //     let res = doea.incorporate_guess_feedback(5, 0);
-    //     assert_eq!(res.as_ref().is_some(), false);
-    // }
+        let numbers = generate_default_init_values_for_numbers();
+        let mut doea = DepthOneEntropyAlgo::new(numbers).unwrap();
+        let guess = doea.guess().unwrap();
+        let res = doea.incorporate_guess_feedback(5, 0);
+        assert_eq!(res.as_ref().is_some(), false);
+    }
 }

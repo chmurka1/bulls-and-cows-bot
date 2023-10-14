@@ -1,4 +1,4 @@
-use std::collections::{HashSet, HashMap};
+use std::collections::HashSet;
 
 pub fn get_bulls_and_cows(number0: String, number1: String) -> Option<(usize, usize)> {
     if number0.len() != number1.len() {
