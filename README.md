@@ -2,7 +2,7 @@
 
 The goal of this project is to [bulls and cows](https://en.wikipedia.org/wiki/Bulls_and_Cows) game. The algorithm is inspired by [this video](https://www.youtube.com/watch?v=v68zYyaEmEA) by 3Blue1Brown.
 
-##Bulls and cows numerical version -- rules
+## Bulls and cows numerical version -- rules
 
 The game starts with choosing a secret (random) 4-digit number with a constraint that the digits must be all different. The objective is to guess that number, given the clues. After each guess, which is also composed of nonrepeating digits, the player is given two numbers - number of bulls and number of cows. Bulls are the digits of the guessed number that are contained in the final answer and are in right positions. Cows are the digits that are containeed in the final answer, but are in wrong positions.
 
