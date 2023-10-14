@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 // use std::collections::HashSet;
 use crate::algos::algos_utils;
 // use crate::algos::algos_utils::{get_bulls_and_cows, generate_possible_feedbacks};
@@ -90,21 +92,6 @@ impl DepthOneEntropyAlgo {
         return Some(valid_numbers);
     }
 
-    fn find_valid_numbers_count(&self, guess: (String, (usize, usize))) -> Option<usize> {
-        if guess.0.len() != self.ndigits || guess.1.0 + guess.1.1 > self.ndigits {
-            return None;
-        }
-
-        let mut valid_numbers_count: usize = 0;
-        for number in self.numbers.iter() {
-            let bnc: (usize, usize) = algos_utils::get_bulls_and_cows(guess.0.clone(), number.clone()).unwrap();
-            if bnc.0 == guess.1.0 && bnc.1 == guess.1.1 {
-                valid_numbers_count += 1;
-            }
-        }
-    
-        return Some(valid_numbers_count);
-    }
 
     fn calculate_guess_entropy(&self, guess: String) -> Option<f64> {
         if self.get_numbers_count() == 1 {
@@ -112,13 +99,16 @@ impl DepthOneEntropyAlgo {
         }
         let numbers_but_guess_count: f64 = (self.get_numbers_count() - 1) as f64;
         let mut entropy: f64 = 0.0;
-        for possible_feedback in self.possible_feedbacks.iter() {
-            let guess_with_feedback: (String, (usize, usize)) = (guess.clone(), *possible_feedback);
-            let valid_numbers_count: f64 = self.find_valid_numbers_count(guess_with_feedback).unwrap() as f64;
-            let probability: f64 = valid_numbers_count / numbers_but_guess_count;
-            if probability != 0 as f64 {
-                entropy += -probability * probability.log2();
-            }   
+        let mut valid_numbers_count_per_feedback: HashMap<(usize, usize), usize> = HashMap::new();
+        for number in self.numbers.iter() {
+            let bnc:(usize, usize) = algos_utils::get_bulls_and_cows(number.clone(), guess.clone()).unwrap();
+            valid_numbers_count_per_feedback.entry(bnc).and_modify(|e| *e += 1).or_insert(1);
+        }
+        valid_numbers_count_per_feedback.remove_entry(&(self.ndigits.clone(),0));
+
+        for count in valid_numbers_count_per_feedback.values() {
+            let probability: f64 = *count as f64 / numbers_but_guess_count;
+            entropy += -probability * probability.log2();
         }
         
         return Some(entropy);

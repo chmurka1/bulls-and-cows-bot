@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::{HashSet, HashMap};
 
 pub fn get_bulls_and_cows(number0: String, number1: String) -> Option<(usize, usize)> {
     if number0.len() != number1.len() {
@@ -77,7 +77,6 @@ mod tests {
             assert_eq!(digits.len(), 4);
         }
     }
-
     #[test]
     fn test_generate_possible_feedbacks() {
         use super::generate_possible_feedbacks;
@@ -87,16 +86,5 @@ mod tests {
         assert_eq!(possible_feedbacks.len(), 14);
         let possible_feedbacks = generate_possible_feedbacks(5);
         assert_eq!(possible_feedbacks.len(), 6*7/2-1);
-    }
-}
-
-
-fn main() {
-    let f = generate_possible_feedbacks(4);
-    println!("{:?}", f);
-    let x = f[0];
-    println!("{:?}", f[0]);
-    for possible_feedback in f {
-        println!("{:?}", ("r", possible_feedback));
     }
 }
